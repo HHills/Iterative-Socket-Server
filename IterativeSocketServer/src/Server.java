@@ -36,7 +36,7 @@ public class Server
 			while(true)
 			{
 				Socket socket = serverSocket.accept();
-				System.out.println("New victim...");
+				System.out.println("New user connected");
 				InputStream input = socket.getInputStream();
 	            BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 
@@ -50,11 +50,34 @@ public class Server
 	            {
 	            	text = reader.readLine();
 	            	
-	            	if(text.equals("1"))
+	            	switch(text)
 	            	{
-	            		writer.println("one");
+	            		case "1":
+	            			writer.println("You have entered 1");
+	            			break;
+	            		case "2":
+	            			writer.println("You have entered 2");
+	            			break;
+	            		case "3":
+	            			writer.println("You have entered 3");
+	            			break;
+	            		case "4":
+	            			writer.println("You have entered 4");
+	            			break;
+	            		case "5":
+	            			writer.println("You have entered 5");
+	            			break;
+	            		case "6":
+	            			writer.println("You have entered 6");
+	            			break;
+	            		case "7":
+	            			writer.println("Exiting program...");
+	            			break;
+	            		default:
+	            			writer.println("Unrecognized input");
 	            	}
-	            } while (!text.equals("Goodbye"));
+	            } while (!text.equals("7"));
+				System.out.println("User disconnected");
 	            socket.close();
 			}
 		}

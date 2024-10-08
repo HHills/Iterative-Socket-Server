@@ -42,7 +42,10 @@ public class Client
             
             do
             {
-            	text = console.readLine("Your favorite game is?: ");
+            	text = console.readLine("\nPlease enter the number corresponding to the desired command: \n"
+            			+ "1. Date and Time\n2. Uptime\n3. Memory Use\n4. Netstat\n5. Current Users\n"
+            			+ "6. Running Process\n7. Exit Program\n");
+            	
             	
             	writer.println(text);
 
@@ -54,7 +57,7 @@ public class Client
                 System.out.println(time);
  
             	
-            } while (!text.equals("Goodbye"));
+            } while (!text.equals("7"));
             socket.close();
 		}
 		catch(UnknownHostException e)
