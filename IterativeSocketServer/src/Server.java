@@ -1,4 +1,9 @@
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
@@ -23,9 +28,7 @@ public class Server
 				portNum = inputValidation(num);
 			}
 		}
-		
-		System.out.println("Valid input");
-		
+				
 		try(ServerSocket serverSocket = new ServerSocket(portNum))
 		{
 			System.out.println("Server is listening on port " + portNum);
@@ -33,6 +36,26 @@ public class Server
 			while(true)
 			{
 				Socket socket = serverSocket.accept();
+				System.out.println("New victim...");
+				InputStream input = socket.getInputStream();
+	            BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+
+	            OutputStream output = socket.getOutputStream();
+	            PrintWriter writer = new PrintWriter(output, true);
+
+
+	            String text;
+	            
+	            do
+	            {
+	            	text = reader.readLine();
+	            	
+	            	if(text.equals("1"))
+	            	{
+	            		writer.println("one");
+	            	}
+	            } while (!text.equals("Goodbye"));
+	            socket.close();
 			}
 		}
 		catch (IOException e)
