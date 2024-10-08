@@ -6,7 +6,11 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Date;
 import java.util.Scanner;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
+
 
 public class Server 
 {
@@ -53,14 +57,37 @@ public class Server
 	            	switch(text)
 	            	{
 	            		case "1":
-	            			writer.println("You have entered 1");
+	            			writer.println(new Date().toString());
 	            			break;
 	            		case "2":
-	            			writer.println("You have entered 2");
+	            		{
+	            			//This gets the server's uptime
+	            			RuntimeMXBean rb = ManagementFactory.getRuntimeMXBean();
+	            			long uptime = rb.getUptime(); //these are in milliseconds
+	            			
+	            			long days = uptime / (24 * 60 * 60 * 1000);
+	            	        long hours = (uptime / (60 * 60 * 1000)) % 24;
+	            	        long minutes = (uptime / (60 * 1000)) % 60;
+	            	        long seconds = (uptime / 1000) % 60;
+	            	        
+	            			writer.println("Uptime: "
+	            						  + days + " Day(s), " + 
+	            						  hours + " Hour(s), " + minutes
+	            						  + " Minute(s), " + seconds + " Second(s)");
 	            			break;
+	            		}
 	            		case "3":
-	            			writer.println("You have entered 3");
+	            		{
+	            			Runtime rt = Runtime.getRuntime();
+	            			long totalMem = rt.totalMemory(); //these are in bytes
+	            			long freeMem = rt.freeMemory();
+	            			long usedMem = totalMem - freeMem;
+	            			
+	            			long usedMemMB = usedMem / (1024*1024);
+
+	            			writer.println("Memory used: " + usedMem + " B, " + usedMemMB + " MB");
 	            			break;
+	            		}
 	            		case "4":
 	            			writer.println("You have entered 4");
 	            			break;
