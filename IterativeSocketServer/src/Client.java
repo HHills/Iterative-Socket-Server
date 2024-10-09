@@ -32,6 +32,31 @@ public class Client
 				portNum = inputValidation(num);
 			}
 		}
+		
+		System.out.println("Choose your number of client sessions: 1, 5, 10, 15, 20, 25");
+		String sessions = scnr.nextLine();
+		
+		int clientSessions = inputValidation(sessions);
+		
+		if(clientSessions == -1 || (clientSessions != 1 && clientSessions != 5 && clientSessions != 10 &&
+                clientSessions != 15 && clientSessions != 20 && clientSessions != 25))
+		{
+			while(clientSessions == -1 ||(clientSessions != 1 && clientSessions != 5 && clientSessions != 10 &&
+	                clientSessions != 15 && clientSessions != 20 && clientSessions != 25))
+			{
+				if(clientSessions == -1)
+				{
+					System.out.println("The information you have entered is not an integer! \nChoose your number of client sessions: 1, 5, 10, 15, 20, 25");
+				}
+				else
+				{
+					System.out.println("The information you have entered is not in the range of options! \nChoose your number of client sessions: 1, 5, 10, 15, 20, 25");
+				}
+				sessions = scnr.nextLine();
+				clientSessions = inputValidation(sessions);
+			}
+		}
+		
 		try(Socket socket = new Socket(netAddr, portNum))
 		{
 			OutputStream output = socket.getOutputStream();
@@ -70,15 +95,15 @@ public class Client
 			System.out.println("I/O error: " + e.getMessage());
 			e.printStackTrace();
 		}
-		
+        scnr.close();
 	}
 	
 	public static int inputValidation(String num)
 	{
 		try
 		{
-			int portNum = Integer.valueOf(num);
-			return portNum;
+			int intNum = Integer.valueOf(num);
+			return intNum;
 			
 		}
 		catch (NumberFormatException e)
