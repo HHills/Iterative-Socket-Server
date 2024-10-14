@@ -33,11 +33,12 @@ public class Client
 			}
 		}
 		
-		System.out.println("Choose your number of client sessions: 1, 5, 10, 15, 20, 25");
+		System.out.println("Choose your number of client requests: 1, 5, 10, 15, 20, 25");
 		String sessions = scnr.nextLine();
 		
 		int clientSessions = inputValidation(sessions);
 		
+		//If clause ensures that the input is a number and fits the request options
 		if(clientSessions == -1 || (clientSessions != 1 && clientSessions != 5 && clientSessions != 10 &&
                 clientSessions != 15 && clientSessions != 20 && clientSessions != 25))
 		{
@@ -57,45 +58,27 @@ public class Client
 			}
 		}
 		
-		try(Socket socket = new Socket(netAddr, portNum))
+		String option;
+		
+		do
 		{
-			OutputStream output = socket.getOutputStream();
-            PrintWriter writer = new PrintWriter(output, true);
- 
-            Console console = System.console();
-            String text;
-            
-            do
-            {
-            	text = console.readLine("\nPlease enter the number corresponding to the desired command: \n"
-            			+ "1. Date and Time\n2. Uptime\n3. Memory Use\n4. Netstat\n5. Current Users\n"
-            			+ "6. Running Process\n7. Exit Program\n");
-            	
-            	
-            	writer.println(text);
-
-            	InputStream input = socket.getInputStream();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(input));
- 
-                String time = reader.readLine();
- 
-                System.out.println(time);
- 
-            	
-            } while (!text.equals("7"));
-            socket.close();
-		}
-		catch(UnknownHostException e)
-		{
- 
-            System.out.println("Server was not found: " + e.getMessage());
-		}
-		catch(IOException e)
-		{
-			System.out.println("I/O error: " + e.getMessage());
-			e.printStackTrace();
-		}
-        scnr.close();
+			System.out.println("\nPlease enter the number corresponding to the desired command: \n"
+           						+ "1. Date and Time\n2. Uptime\n3. Memory Use\n4. Netstat\n5. Current Users\n"
+           						+ "6. Running Process\n7. Exit Program\n");
+			option = scnr.nextLine();
+			
+			for(int i = 0; i < clientSessions; i++)
+			{
+				new Thread(new ClientRequestThread(netAddr, portNum, option)).start();
+				
+				try {
+			        Thread.sleep(5);  // Delay in milliseconds before the user is prompted again
+			    } catch (InterruptedException e) {
+			        Thread.currentThread().interrupt();
+			    }
+			}
+			
+		}while(!option.equals("7"));
 	}
 	
 	public static int inputValidation(String num)
@@ -109,6 +92,47 @@ public class Client
 		catch (NumberFormatException e)
 		{
 			return -1;
+		}
+	}
+}
+
+class ClientRequestThread implements Runnable
+{
+	private String netAddr;
+	private int portNum;
+	private String userOpt; //Represents the user input
+	
+	public ClientRequestThread(String netAddr, int portNum, String userOpt)
+	{
+		this.netAddr = netAddr;
+		this.portNum = portNum;
+		this.userOpt = userOpt;
+	}
+
+	@Override
+	public void run()
+	{
+		try(Socket socket = new Socket(netAddr, portNum))
+		{
+			OutputStream output = socket.getOutputStream();
+            PrintWriter writer = new PrintWriter(output, true);
+            
+            writer.println(userOpt); //Sends client's response to server
+            
+            InputStream input = socket.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+            
+            String serverResp = reader.readLine(); //Gets server's response
+            System.out.println(serverResp); //Prints server's response
+		}
+		catch(UnknownHostException e)
+		{
+			System.out.println("Server was not found: " + e.getMessage());
+		}
+		catch(IOException e)
+		{
+			System.out.println("I/O error: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 }

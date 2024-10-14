@@ -40,72 +40,9 @@ public class Server
 			while(true)
 			{
 				Socket socket = serverSocket.accept();
-				System.out.println("New user connected");
-				InputStream input = socket.getInputStream();
-	            BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-
-	            OutputStream output = socket.getOutputStream();
-	            PrintWriter writer = new PrintWriter(output, true);
-
-
-	            String text;
-	            
-	            do
-	            {
-	            	text = reader.readLine();
-	            	
-	            	switch(text)
-	            	{
-	            		case "1":
-	            			writer.println(new Date().toString());
-	            			break;
-	            		case "2":
-	            		{
-	            			//This gets the server's uptime
-	            			RuntimeMXBean rb = ManagementFactory.getRuntimeMXBean();
-	            			long uptime = rb.getUptime(); //these are in milliseconds
-	            			
-	            			long days = uptime / (24 * 60 * 60 * 1000);
-	            	        long hours = (uptime / (60 * 60 * 1000)) % 24;
-	            	        long minutes = (uptime / (60 * 1000)) % 60;
-	            	        long seconds = (uptime / 1000) % 60;
-	            	        
-	            			writer.println("Uptime: "
-	            						  + days + " Day(s), " + 
-	            						  hours + " Hour(s), " + minutes
-	            						  + " Minute(s), " + seconds + " Second(s)");
-	            			break;
-	            		}
-	            		case "3":
-	            		{
-	            			Runtime rt = Runtime.getRuntime();
-	            			long totalMem = rt.totalMemory(); //these are in bytes
-	            			long freeMem = rt.freeMemory();
-	            			long usedMem = totalMem - freeMem;
-	            			
-	            			long usedMemMB = usedMem / (1024*1024);
-
-	            			writer.println("Memory used: " + usedMem + " B, " + usedMemMB + " MB");
-	            			break;
-	            		}
-	            		case "4":
-	            			writer.println("You have entered 4");
-	            			break;
-	            		case "5":
-	            			writer.println("You have entered 5");
-	            			break;
-	            		case "6":
-	            			writer.println("You have entered 6");
-	            			break;
-	            		case "7":
-	            			writer.println("Exiting program...");
-	            			break;
-	            		default:
-	            			writer.println("Unrecognized input");
-	            	}
-	            } while (!text.equals("7"));
-				System.out.println("User disconnected");
-	            socket.close();
+				System.out.println("New client connected");
+                new ServerRequestHandler(socket).run(); //use ServerRequestHandler to handle
+                									    //every input from the user
 			}
 		}
 		catch (IOException e)
@@ -131,4 +68,82 @@ public class Server
 		}
 	}
 	
+}
+
+class ServerRequestHandler implements Runnable
+{
+	private Socket socket;
+	public ServerRequestHandler(Socket socket)
+	{
+		this.socket = socket;
+	}
+	
+	@Override
+	public void run() 
+	{	
+		try(InputStream input = socket.getInputStream())
+		{
+			BufferedReader reader = new BufferedReader(new InputStreamReader(input));	         
+			OutputStream output = socket.getOutputStream();
+			PrintWriter writer = new PrintWriter(output, true);
+			
+	        String text;
+	            
+	        text = reader.readLine(); //Reads in client thread input
+	        
+	        switch(text) //executes based on input number
+	        {
+	        	case "1":
+	        		writer.println(new Date().toString());
+	        		break;
+	        	case "2":
+	        	{
+	        		//This gets the server's uptime
+	        		RuntimeMXBean rb = ManagementFactory.getRuntimeMXBean();
+	        		long uptime = rb.getUptime(); //these are in milliseconds
+	        			
+	        		long days = uptime / (24 * 60 * 60 * 1000);
+	        		long hours = (uptime / (60 * 60 * 1000)) % 24;
+	        		long minutes = (uptime / (60 * 1000)) % 60;
+	        		long seconds = (uptime / 1000) % 60;
+        	        
+	        		writer.println("Uptime: "
+	        						+ days + " Day(s), " + hours + " Hour(s), " + minutes
+	        						+ " Minute(s), " + seconds + " Second(s)");
+	        		break;
+	        	}
+        		case "3":
+        		{
+        			Runtime rt = Runtime.getRuntime(); //use runtime to get memory information
+        			long totalMem = rt.totalMemory(); //these are in bytes
+        			long freeMem = rt.freeMemory();
+        			long usedMem = totalMem - freeMem;
+        			
+        			long usedMemMB = usedMem / (1024*1024); //conversion to megabytes
+
+        			writer.println("Memory used: " + usedMem + " B, " + usedMemMB + " MB");
+        			break;
+        		}
+        		case "4":
+        			writer.println("You have entered 4");
+        			break;
+        		case "5":
+        			writer.println("You have entered 5");
+        			break;
+        		case "6":
+        			writer.println("You have entered 6");
+        			break;
+        		case "7":
+        			writer.println("Exiting program...");
+        			break;
+        		default:
+        			writer.println("Unrecognized input");
+	        }	
+		}
+		catch (IOException e)
+		{
+			System.out.println("Server exception: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
 }
