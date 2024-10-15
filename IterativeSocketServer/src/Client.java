@@ -67,18 +67,43 @@ public class Client
            						+ "6. Running Process\n7. Exit Program\n");
 			option = scnr.nextLine();
 			
+			long totalTurnAroundTime = 0;
+
 			for(int i = 0; i < clientSessions; i++)
-			{
-				new Thread(new ClientRequestThread(netAddr, portNum, option)).start();
+			{				
+				Thread clientThread = new Thread(new ClientRequestThread(netAddr, portNum, option));
+				
+				//Get start time
+				long startTime = System.currentTimeMillis();
+				
+				//Start thread
+				clientThread.start();
 				
 				try {
-			        Thread.sleep(5);  // Delay in milliseconds before the user is prompted again
-			    } catch (InterruptedException e) {
-			        Thread.currentThread().interrupt();
-			    }
+	                clientThread.join();  //This ensures that the thread is finished first
+	                
+					System.out.println("\nStart time: " + startTime + " ms");
+	                long endTime = System.currentTimeMillis();
+					System.out.println("End time: " + endTime + " ms");
+					
+					long turnAroundTime = endTime - startTime;
+					System.out.println("Turnaround time: " + turnAroundTime + " ms\n");
+					
+					
+					totalTurnAroundTime += turnAroundTime; //adding up total turnaround time
+					
+	            } catch (InterruptedException e) {
+	                Thread.currentThread().interrupt();
+	            }
 			}
 			
+			double decimalClientSessions = (double) clientSessions; //ensuring we get decimal precision
+			double avgTurnAroundTime = totalTurnAroundTime/decimalClientSessions;
+			System.out.println("\nTotal turnaround time: " + totalTurnAroundTime + " ms");
+			System.out.println("Average turnaround time: " + avgTurnAroundTime + " ms\n");
+			
 		}while(!option.equals("7"));
+		
 	}
 	
 	public static int inputValidation(String num)
