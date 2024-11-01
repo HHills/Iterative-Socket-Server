@@ -126,12 +126,71 @@ class ServerRequestHandler implements Runnable
         		}
         		case "4":
         			writer.println("You have entered 4");
+        			
+        			//This uses java to run netstat
+        				ProcessBuilder processBuilderNetstat = new ProcessBuilder("netstat", "-an"); 
+        				Process process = processBuilderNetstat.start();
+        				
+        			//reads the netstat results
+        				BufferedReader netstatReader = new BufferedReader(new InputStreamReader(process.getInputStream())); 
+        				String lineNetstat; 
+        				
+        			//prints results
+        				writer.println("Netstat Results:"); 
+        				while ((lineNetstat = reader.readLine()) !=null) {
+        				writer.println(lineNetstat);
+        			}
+        			//exits
+				try {
+					process.waitFor();
+				} catch (InterruptedException e) {
+					
+					e.printStackTrace();
+				}
+        				netstatReader.close(); 
         			break;
         		case "5":
         			writer.println("You have entered 5");
+        			
+        			
+        			//runs who
+        				ProcessBuilder processBuilderUsers = new ProcessBuilder("who");
+        				Process processUsers = processBuilderUsers.start();
+        				
+        				BufferedReader userReader = new BufferedReader(new InputStreamReader(processUsers.getInputStream()));
+        				String lineUsers;
+        				
+        				writer.println("Currently logged-in users:");
+        				while((lineUsers = userReader.readLine()) !=null) {
+        					writer.println(lineUsers);
+        				}
+				
+				try {
+					processUsers.waitFor();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+        				userReader.close();
         			break;
         		case "6":
         			writer.println("You have entered 6");
+        			
+        			Process processPs = Runtime.getRuntime().exec("ps -a");
+        			
+        			BufferedReader readerPs = new BufferedReader(new InputStreamReader(processPs.getInputStream()));
+        			String line;
+        			writer.println("Running processes:");
+        			while ((line = readerPs.readLine()) !=null) {
+        				writer.println(line);
+        			}
+				try {
+					processPs.waitFor();
+				} catch (InterruptedException e) {
+					
+					e.printStackTrace();
+				}
+        			readerPs.close();
         			break;
         		case "7":
         			writer.println("Exiting program...");
