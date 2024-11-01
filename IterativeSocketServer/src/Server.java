@@ -125,6 +125,7 @@ class ServerRequestHandler implements Runnable
         			break;
         		}
         		case "4":
+        		{
         			writer.println("You have entered 4");
         			
         			//This uses java to run netstat
@@ -141,15 +142,17 @@ class ServerRequestHandler implements Runnable
         				writer.println(lineNetstat);
         			}
         			//exits
-				try {
-					process.waitFor();
-				} catch (InterruptedException e) {
-					
-					e.printStackTrace();
-				}
-        				netstatReader.close(); 
+					try {
+						process.waitFor();
+					} catch (InterruptedException e) {
+						
+						e.printStackTrace();
+					}
+	        				netstatReader.close(); 
         			break;
+        		}
         		case "5":
+        		{
         			writer.println("You have entered 5");
         			
         			
@@ -165,15 +168,17 @@ class ServerRequestHandler implements Runnable
         					writer.println(lineUsers);
         				}
 				
-				try {
-					processUsers.waitFor();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-        				userReader.close();
+					try {
+						processUsers.waitFor();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	        				userReader.close();
         			break;
+        		}
         		case "6":
+        		{
         			writer.println("You have entered 6");
         			
         			Process processPs = Runtime.getRuntime().exec("ps -a");
@@ -184,14 +189,15 @@ class ServerRequestHandler implements Runnable
         			while ((line = readerPs.readLine()) !=null) {
         				writer.println(line);
         			}
-				try {
-					processPs.waitFor();
-				} catch (InterruptedException e) {
-					
-					e.printStackTrace();
-				}
-        			readerPs.close();
+					try {
+						processPs.waitFor();
+					} catch (InterruptedException e) {
+						
+						e.printStackTrace();
+					}
+	        			readerPs.close();
         			break;
+        		}
         		case "7":
         			writer.println("Exiting program...");
         			break;
