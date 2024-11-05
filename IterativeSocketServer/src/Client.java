@@ -147,8 +147,14 @@ class ClientRequestThread implements Runnable
             InputStream input = socket.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(input));
             
-            String serverResp = reader.readLine(); //Gets server's response
-            System.out.println(serverResp); //Prints server's response
+//            String serverResp = reader.readLine(); //Gets server's response
+//            System.out.println(serverResp); //Prints server's response
+            
+            String serverResp;
+            while ((serverResp = reader.readLine()) != null)
+            {
+            	System.out.println(serverResp);
+            }
 		}
 		catch(UnknownHostException e)
 		{

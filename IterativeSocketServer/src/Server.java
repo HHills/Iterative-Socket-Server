@@ -125,37 +125,33 @@ class ServerRequestHandler implements Runnable
         			break;
         		}
         		case "4":
-        		{
-        			writer.println("You have entered 4");
-        			
-        			//This uses java to run netstat
-        				ProcessBuilder processBuilderNetstat = new ProcessBuilder("netstat", "-an"); 
-        				Process process = processBuilderNetstat.start();
-        				
-        			//reads the netstat results
-        				BufferedReader netstatReader = new BufferedReader(new InputStreamReader(process.getInputStream())); 
+        		{   
+        			Process performNetstat = Runtime.getRuntime().exec("netstat -ano");
+    				BufferedReader netstatReader = new BufferedReader(new InputStreamReader(performNetstat.getInputStream())); 
+    				
+        			try
+        			{
         				String lineNetstat; 
         				
-        			//prints results
-        				writer.println("Netstat Results:"); 
-        				while ((lineNetstat = reader.readLine()) !=null) {
-        				writer.println(lineNetstat);
+        				writer.println("Netstat Results: ");
+        				while ((lineNetstat = netstatReader.readLine()) !=null)
+        				{
+        					writer.println(lineNetstat);
+        				}
+        				
+        				performNetstat.waitFor(); //Waits for the process to complete
+        				
         			}
-        			//exits
-					try {
-						process.waitFor();
-					} catch (InterruptedException e) {
-						
-						e.printStackTrace();
-					}
-	        				netstatReader.close(); 
+        			catch (Exception e)
+        			{
+        				e.printStackTrace(System.err);
+        			}
+        			
+        			netstatReader.close();
         			break;
         		}
         		case "5":
-        		{
-        			writer.println("You have entered 5");
-        			
-        			
+        		{	
         			//runs who
         				ProcessBuilder processBuilderUsers = new ProcessBuilder("who");
         				Process processUsers = processBuilderUsers.start();
@@ -178,9 +174,7 @@ class ServerRequestHandler implements Runnable
         			break;
         		}
         		case "6":
-        		{
-        			writer.println("You have entered 6");
-        			
+        		{        			
         			Process processPs = Runtime.getRuntime().exec("ps -a");
         			
         			BufferedReader readerPs = new BufferedReader(new InputStreamReader(processPs.getInputStream()));
