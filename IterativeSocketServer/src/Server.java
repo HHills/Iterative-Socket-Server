@@ -41,8 +41,12 @@ public class Server
 			{
 				Socket socket = serverSocket.accept();
 				System.out.println("New client connected");
-                new ServerRequestHandler(socket).run(); //use ServerRequestHandler to handle
+               // new ServerRequestHandler(socket).run(); //use ServerRequestHandler to handle
                 									    //every input from the user
+				clientHandler(socket);
+				
+				
+				socket.close();
 			}
 		}
 		catch (IOException e)
@@ -68,21 +72,12 @@ public class Server
 		}
 	}
 	
-}
-
-class ServerRequestHandler implements Runnable
-{
-	private Socket socket;
-	public ServerRequestHandler(Socket socket)
-	{
-		this.socket = socket;
-	}
 	
-	@Override
-	public void run() 
-	{	
-		try(InputStream input = socket.getInputStream())
+	private static void clientHandler(Socket socket)
+	{
+		try
 		{
+			InputStream input = socket.getInputStream();
 			BufferedReader reader = new BufferedReader(new InputStreamReader(input));	         
 			OutputStream output = socket.getOutputStream();
 			PrintWriter writer = new PrintWriter(output, true);
@@ -126,7 +121,7 @@ class ServerRequestHandler implements Runnable
         		}
         		case "4":
         		{   
-        			Process performNetstat = Runtime.getRuntime().exec("netstat -ano");
+        			Process performNetstat = Runtime.getRuntime().exec("netstat -aon");
     				BufferedReader netstatReader = new BufferedReader(new InputStreamReader(performNetstat.getInputStream())); 
     				
         			try
@@ -197,12 +192,16 @@ class ServerRequestHandler implements Runnable
         			break;
         		default:
         			writer.println("Unrecognized input");
-	        }	
+	        }	 
 		}
 		catch (IOException e)
 		{
 			System.out.println("Server exception: " + e.getMessage());
-			e.printStackTrace();
+			e.printStackTrace();	
 		}
 	}
+	
 }
+
+
+
